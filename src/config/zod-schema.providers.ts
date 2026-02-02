@@ -4,12 +4,14 @@ import { GroupPolicySchema } from "./zod-schema.core.js";
 import {
   BlueBubblesConfigSchema,
   DiscordConfigSchema,
+  DingTalkConfigSchema,
   GoogleChatConfigSchema,
   IMessageConfigSchema,
   MSTeamsConfigSchema,
   SignalConfigSchema,
   SlackConfigSchema,
   TelegramConfigSchema,
+  WeComConfigSchema,
 } from "./zod-schema.providers-core.js";
 import { WhatsAppConfigSchema } from "./zod-schema.providers-whatsapp.js";
 
@@ -35,6 +37,8 @@ export const ChannelsSchema = z
     imessage: IMessageConfigSchema.optional(),
     bluebubbles: BlueBubblesConfigSchema.optional(),
     msteams: MSTeamsConfigSchema.optional(),
+    dingtalk: DingTalkConfigSchema.optional(),
+    wecom: WeComConfigSchema.optional(),
   })
   .passthrough() // Allow extension channel configs (nostr, matrix, zalo, etc.)
   .optional();

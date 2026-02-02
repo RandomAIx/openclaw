@@ -398,6 +398,53 @@ export const GoogleChatConfigSchema = GoogleChatAccountSchema.extend({
   defaultAccount: z.string().optional(),
 });
 
+export const DingTalkConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    configWrites: z.boolean().optional(),
+    webhookUrl: z.string().optional(),
+    webhookSecret: z.string().optional(),
+    token: z.string().optional(),
+    aesKey: z.string().optional(),
+    dmPolicy: DmPolicySchema.optional().default("pairing"),
+    allowFrom: z.array(z.union([z.string(), z.number()])).optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    requireOpenAllowFrom({
+      policy: value.dmPolicy,
+      allowFrom: value.allowFrom,
+      ctx,
+      path: ["allowFrom"],
+      message:
+        'channels.dingtalk.dmPolicy="open" requires channels.dingtalk.allowFrom to include "*"',
+    });
+  });
+
+export const WeComConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    configWrites: z.boolean().optional(),
+    corpId: z.string().optional(),
+    agentId: z.string().optional(),
+    secret: z.string().optional(),
+    token: z.string().optional(),
+    aesKey: z.string().optional(),
+    webhookUrl: z.string().optional(),
+    dmPolicy: DmPolicySchema.optional().default("pairing"),
+    allowFrom: z.array(z.union([z.string(), z.number()])).optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    requireOpenAllowFrom({
+      policy: value.dmPolicy,
+      allowFrom: value.allowFrom,
+      ctx,
+      path: ["allowFrom"],
+      message: 'channels.wecom.dmPolicy="open" requires channels.wecom.allowFrom to include "*"',
+    });
+  });
+
 export const SlackDmSchema = z
   .object({
     enabled: z.boolean().optional(),

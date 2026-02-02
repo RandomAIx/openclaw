@@ -344,6 +344,16 @@ const FIELD_LABELS: Record<string, string> = {
   "channels.mattermost.chatmode": "Mattermost Chat Mode",
   "channels.mattermost.oncharPrefixes": "Mattermost Onchar Prefixes",
   "channels.mattermost.requireMention": "Mattermost Require Mention",
+  "channels.dingtalk.webhookUrl": "DingTalk Webhook URL",
+  "channels.dingtalk.webhookSecret": "DingTalk Webhook Secret",
+  "channels.dingtalk.token": "DingTalk Token",
+  "channels.dingtalk.aesKey": "DingTalk AES Key",
+  "channels.wecom.corpId": "WeCom Corp ID",
+  "channels.wecom.agentId": "WeCom Agent ID",
+  "channels.wecom.secret": "WeCom Agent Secret",
+  "channels.wecom.token": "WeCom Token",
+  "channels.wecom.aesKey": "WeCom AES Key",
+  "channels.wecom.webhookUrl": "WeCom Webhook URL",
   "channels.signal.account": "Signal Account",
   "channels.imessage.cliPath": "iMessage CLI Path",
   "agents.list[].identity.avatar": "Agent Avatar",
@@ -364,6 +374,9 @@ const FIELD_LABELS: Record<string, string> = {
   "plugins.installs.*.installPath": "Plugin Install Path",
   "plugins.installs.*.version": "Plugin Install Version",
   "plugins.installs.*.installedAt": "Plugin Install Time",
+  "models.providers.local.baseUrl": "Local OpenAI-Compatible Base URL",
+  "models.providers.local.apiKey": "Local OpenAI-Compatible API Key",
+  "models.providers.local.models": "Local OpenAI-Compatible Models",
 };
 
 const FIELD_HELP: Record<string, string> = {
@@ -579,6 +592,10 @@ const FIELD_HELP: Record<string, string> = {
     "Optional image model (provider/model) used when the primary model lacks image input.",
   "agents.defaults.imageModel.fallbacks": "Ordered fallback image models (provider/model).",
   "agents.defaults.cliBackends": "Optional CLI backends for text-only fallback (claude-cli, etc.).",
+  "models.providers.local.baseUrl":
+    "Base URL for a local OpenAI-compatible server (e.g. vLLM, LM Studio, Ollama OpenAI shim).",
+  "models.providers.local.apiKey":
+    "Optional API key for local OpenAI-compatible servers (leave blank if not required).",
   "agents.defaults.humanDelay.mode": 'Delay style for block replies ("off", "natural", "custom").',
   "agents.defaults.humanDelay.minMs": "Minimum delay in ms for custom humanDelay (default: 800).",
   "agents.defaults.humanDelay.maxMs": "Maximum delay in ms for custom humanDelay (default: 2500).",
@@ -615,6 +632,17 @@ const FIELD_HELP: Record<string, string> = {
     "Allow iMessage to write config in response to channel events/commands (default: true).",
   "channels.msteams.configWrites":
     "Allow Microsoft Teams to write config in response to channel events/commands (default: true).",
+  "channels.dingtalk.webhookUrl": "Inbound webhook URL for DingTalk bot events.",
+  "channels.dingtalk.webhookSecret":
+    "Optional DingTalk webhook secret (used to validate signatures).",
+  "channels.dingtalk.token": "Optional DingTalk token (used for signature validation).",
+  "channels.dingtalk.aesKey": "Optional DingTalk AES key for encrypted callbacks.",
+  "channels.wecom.corpId": "WeCom enterprise (corp) ID for app-based integration.",
+  "channels.wecom.agentId": "WeCom application agent ID.",
+  "channels.wecom.secret": "WeCom application secret.",
+  "channels.wecom.token": "WeCom token for signature validation.",
+  "channels.wecom.aesKey": "WeCom AES key for encrypted callbacks.",
+  "channels.wecom.webhookUrl": "Inbound webhook URL for WeCom bot events.",
   "channels.discord.commands.native": 'Override native commands for Discord (bool or "auto").',
   "channels.discord.commands.nativeSkills":
     'Override native skill commands for Discord (bool or "auto").',
@@ -691,6 +719,9 @@ const FIELD_PLACEHOLDERS: Record<string, string> = {
   "gateway.controlUi.basePath": "/openclaw",
   "channels.mattermost.baseUrl": "https://chat.example.com",
   "agents.list[].identity.avatar": "avatars/openclaw.png",
+  "models.providers.local.baseUrl": "http://127.0.0.1:8000/v1",
+  "channels.dingtalk.webhookUrl": "https://oapi.dingtalk.com/robot/send?access_token=TOKEN",
+  "channels.wecom.webhookUrl": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=KEY",
 };
 
 const SENSITIVE_PATTERNS = [/token/i, /password/i, /secret/i, /api.?key/i];

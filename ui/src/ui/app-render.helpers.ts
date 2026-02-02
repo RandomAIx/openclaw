@@ -1,6 +1,7 @@
 import { html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import type { AppViewState } from "./app-view-state";
+import type { Locale } from "./i18n.js";
 import type { ThemeMode } from "./theme";
 import type { ThemeTransitionContext } from "./theme-transition";
 import type { SessionsListResult } from "./types";
@@ -8,9 +9,11 @@ import { refreshChat } from "./app-chat";
 import { syncUrlWithSessionKey } from "./app-settings";
 import { loadChatHistory } from "./controllers/chat";
 import { icons } from "./icons";
+import { createTranslator } from "./i18n.js";
 import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation";
 
-export function renderTab(state: AppViewState, tab: Tab) {
+export function renderTab(state: AppViewState, tab: Tab, locale: Locale) {
+  const t = createTranslator(locale);
   const href = pathForTab(tab, state.basePath);
   return html`
     <a
@@ -30,15 +33,16 @@ export function renderTab(state: AppViewState, tab: Tab) {
         event.preventDefault();
         state.setTab(tab);
       }}
-      title=${titleForTab(tab)}
+      title=${titleForTab(tab, locale)}
     >
       <span class="nav-item__icon" aria-hidden="true">${icons[iconForTab(tab)]}</span>
-      <span class="nav-item__text">${titleForTab(tab)}</span>
+      <span class="nav-item__text">${titleForTab(tab, locale)}</span>
     </a>
   `;
 }
 
-export function renderChatControls(state: AppViewState) {
+export function renderChatControls(state: AppViewState, locale: Locale) {
+  const t = createTranslator(locale);
   const mainSessionKey = resolveMainSessionKey(state.hello, state.sessionsResult);
   const sessionOptions = resolveSessionOptions(
     state.sessionKey,
@@ -125,7 +129,7 @@ export function renderChatControls(state: AppViewState) {
           state.resetToolStream();
           void refreshChat(state as unknown as Parameters<typeof refreshChat>[0]);
         }}
-        title="Refresh chat data"
+        title=${t("chat.refresh", "Refresh chat data")}
       >
         ${refreshIcon}
       </button>
@@ -143,8 +147,8 @@ export function renderChatControls(state: AppViewState) {
         aria-pressed=${showThinking}
         title=${
           disableThinkingToggle
-            ? "Disabled during onboarding"
-            : "Toggle assistant thinking/working output"
+            ? t("chat.thinking.disabled", "Disabled during onboarding")
+            : t("chat.thinking.toggle", "Toggle assistant thinking/working output")
         }
       >
         ${icons.brain}
@@ -162,8 +166,8 @@ export function renderChatControls(state: AppViewState) {
         aria-pressed=${focusActive}
         title=${
           disableFocusToggle
-            ? "Disabled during onboarding"
-            : "Toggle focus mode (hide sidebar + page header)"
+            ? t("chat.focus.disabled", "Disabled during onboarding")
+            : t("chat.focus.toggle", "Toggle focus mode (hide sidebar + page header)")
         }
       >
         ${focusIcon}

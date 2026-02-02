@@ -1,13 +1,16 @@
 import type { IconName } from "./icons.js";
+import type { Locale } from "./i18n.js";
+import { createTranslator } from "./i18n.js";
 
-export const TAB_GROUPS = [
-  { label: "Chat", tabs: ["chat"] },
+export const TAB_GROUP_KEYS = [
+  { key: "chat", labelKey: "nav.chat", tabs: ["chat"] },
   {
-    label: "Control",
+    key: "control",
+    labelKey: "nav.control",
     tabs: ["overview", "channels", "instances", "sessions", "cron"],
   },
-  { label: "Agent", tabs: ["skills", "nodes"] },
-  { label: "Settings", tabs: ["config", "debug", "logs"] },
+  { key: "agent", labelKey: "nav.agent", tabs: ["skills", "nodes"] },
+  { key: "settings", labelKey: "nav.settings", tabs: ["config", "debug", "logs"] },
 ] as const;
 
 export type Tab =
@@ -127,60 +130,74 @@ export function iconForTab(tab: Tab): IconName {
   }
 }
 
-export function titleForTab(tab: Tab) {
+export function titleForTab(tab: Tab, locale: Locale = "en") {
+  const t = createTranslator(locale);
   switch (tab) {
     case "overview":
-      return "Overview";
+      return t("tab.overview", "Overview");
     case "channels":
-      return "Channels";
+      return t("tab.channels", "Channels");
     case "instances":
-      return "Instances";
+      return t("tab.instances", "Instances");
     case "sessions":
-      return "Sessions";
+      return t("tab.sessions", "Sessions");
     case "cron":
-      return "Cron Jobs";
+      return t("tab.cron", "Cron Jobs");
     case "skills":
-      return "Skills";
+      return t("tab.skills", "Skills");
     case "nodes":
-      return "Nodes";
+      return t("tab.nodes", "Nodes");
     case "chat":
-      return "Chat";
+      return t("tab.chat", "Chat");
     case "config":
-      return "Config";
+      return t("tab.config", "Config");
     case "debug":
-      return "Debug";
+      return t("tab.debug", "Debug");
     case "logs":
-      return "Logs";
+      return t("tab.logs", "Logs");
     default:
-      return "Control";
+      return t("nav.control", "Control");
   }
 }
 
-export function subtitleForTab(tab: Tab) {
+export function subtitleForTab(tab: Tab, locale: Locale = "en") {
+  const t = createTranslator(locale);
   switch (tab) {
     case "overview":
-      return "Gateway status, entry points, and a fast health read.";
+      return t("tab.overview.subtitle", "Gateway status, entry points, and a fast health read.");
     case "channels":
-      return "Manage channels and settings.";
+      return t("tab.channels.subtitle", "Manage channels and settings.");
     case "instances":
-      return "Presence beacons from connected clients and nodes.";
+      return t("tab.instances.subtitle", "Presence beacons from connected clients and nodes.");
     case "sessions":
-      return "Inspect active sessions and adjust per-session defaults.";
+      return t(
+        "tab.sessions.subtitle",
+        "Inspect active sessions and adjust per-session defaults.",
+      );
     case "cron":
-      return "Schedule wakeups and recurring agent runs.";
+      return t("tab.cron.subtitle", "Schedule wakeups and recurring agent runs.");
     case "skills":
-      return "Manage skill availability and API key injection.";
+      return t("tab.skills.subtitle", "Manage skill availability and API key injection.");
     case "nodes":
-      return "Paired devices, capabilities, and command exposure.";
+      return t("tab.nodes.subtitle", "Paired devices, capabilities, and command exposure.");
     case "chat":
-      return "Direct gateway chat session for quick interventions.";
+      return t("tab.chat.subtitle", "Direct gateway chat session for quick interventions.");
     case "config":
-      return "Edit ~/.openclaw/openclaw.json safely.";
+      return t("tab.config.subtitle", "Edit ~/.openclaw/openclaw.json safely.");
     case "debug":
-      return "Gateway snapshots, events, and manual RPC calls.";
+      return t("tab.debug.subtitle", "Gateway snapshots, events, and manual RPC calls.");
     case "logs":
-      return "Live tail of the gateway file logs.";
+      return t("tab.logs.subtitle", "Live tail of the gateway file logs.");
     default:
       return "";
   }
+}
+
+export function tabGroups(locale: Locale) {
+  const t = createTranslator(locale);
+  return TAB_GROUP_KEYS.map((group) => ({
+    key: group.key,
+    label: t(group.labelKey),
+    tabs: group.tabs,
+  }));
 }
