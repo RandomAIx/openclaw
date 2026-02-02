@@ -14,6 +14,7 @@ const createHost = (tab: Tab): SettingsHost => ({
     sessionKey: "main",
     lastActiveSessionKey: "main",
     theme: "system",
+    locale: "en",
     chatFocusMode: false,
     chatShowThinking: true,
     splitRatio: 0.6,

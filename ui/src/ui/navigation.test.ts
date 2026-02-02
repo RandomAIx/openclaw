@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  TAB_GROUPS,
+  TAB_GROUP_KEYS,
   iconForTab,
   inferBasePathFromPathname,
   normalizeBasePath,
@@ -12,8 +12,8 @@ import {
   type Tab,
 } from "./navigation";
 
-/** All valid tab identifiers derived from TAB_GROUPS */
-const ALL_TABS: Tab[] = TAB_GROUPS.flatMap((group) => group.tabs) as Tab[];
+/** All valid tab identifiers derived from TAB_GROUP_KEYS */
+const ALL_TABS: Tab[] = TAB_GROUP_KEYS.flatMap((group) => group.tabs) as Tab[];
 
 describe("iconForTab", () => {
   it("returns a non-empty string for every tab", () => {
@@ -172,17 +172,17 @@ describe("inferBasePathFromPathname", () => {
   });
 });
 
-describe("TAB_GROUPS", () => {
+describe("TAB_GROUP_KEYS", () => {
   it("contains all expected groups", () => {
-    const labels = TAB_GROUPS.map((g) => g.label);
-    expect(labels).toContain("Chat");
-    expect(labels).toContain("Control");
-    expect(labels).toContain("Agent");
-    expect(labels).toContain("Settings");
+    const labels = TAB_GROUP_KEYS.map((g) => g.labelKey);
+    expect(labels).toContain("nav.chat");
+    expect(labels).toContain("nav.control");
+    expect(labels).toContain("nav.agent");
+    expect(labels).toContain("nav.settings");
   });
 
   it("all tabs are unique", () => {
-    const allTabs = TAB_GROUPS.flatMap((g) => g.tabs);
+    const allTabs = TAB_GROUP_KEYS.flatMap((g) => g.tabs);
     const uniqueTabs = new Set(allTabs);
     expect(uniqueTabs.size).toBe(allTabs.length);
   });

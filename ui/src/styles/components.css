@@ -681,6 +681,12 @@
   width: 100%;
 }
 
+.select--compact {
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 @container (max-width: 560px) {
   .list-item {
     grid-template-columns: 1fr;

@@ -27,6 +27,7 @@ import {
   type Tab,
 } from "./navigation";
 import { saveSettings, type UiSettings } from "./storage";
+import { normalizeLocale } from "./i18n";
 import { resolveTheme, type ResolvedTheme, type ThemeMode } from "./theme";
 import { startThemeTransition, type ThemeTransitionContext } from "./theme-transition";
 
@@ -52,6 +53,7 @@ export function applySettings(host: SettingsHost, next: UiSettings) {
   const normalized = {
     ...next,
     lastActiveSessionKey: next.lastActiveSessionKey?.trim() || next.sessionKey.trim() || "main",
+    locale: normalizeLocale(next.locale),
   };
   host.settings = normalized;
   saveSettings(normalized);
@@ -59,6 +61,7 @@ export function applySettings(host: SettingsHost, next: UiSettings) {
     host.theme = next.theme;
     applyResolvedTheme(host, resolveTheme(next.theme));
   }
+  applyLocale(normalized.locale);
   host.applySessionKey = host.settings.lastActiveSessionKey;
 }
 
@@ -196,6 +199,15 @@ export function inferBasePath() {
 export function syncThemeWithSettings(host: SettingsHost) {
   host.theme = host.settings.theme ?? "system";
   applyResolvedTheme(host, resolveTheme(host.theme));
+}
+
+export function syncLocaleWithSettings(host: SettingsHost) {
+  applyLocale(host.settings.locale);
+}
+
+function applyLocale(locale: UiSettings["locale"]) {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = locale;
 }
 
 export function applyResolvedTheme(host: SettingsHost, resolved: ResolvedTheme) {

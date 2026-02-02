@@ -66,14 +66,8 @@ import {
   type SkillMessage,
 } from "./controllers/skills";
 import { icons } from "./icons";
-import {
-  TAB_GROUPS,
-  iconForTab,
-  pathForTab,
-  subtitleForTab,
-  titleForTab,
-  type Tab,
-} from "./navigation";
+import { createTranslator } from "./i18n";
+import { pathForTab, subtitleForTab, tabGroups, titleForTab, type Tab } from "./navigation";
 import { renderChannels } from "./views/channels";
 import { renderChat } from "./views/chat";
 import { renderConfig } from "./views/config";
@@ -104,10 +98,11 @@ function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
 }
 
 export function renderApp(state: AppViewState) {
+  const t = createTranslator(state.settings.locale);
   const presenceCount = state.presenceEntries.length;
   const sessionsCount = state.sessionsResult?.count ?? null;
   const cronNext = state.cronStatus?.nextWakeAtMs ?? null;
-  const chatDisabledReason = state.connected ? null : "Disconnected from gateway.";
+  const chatDisabledReason = state.connected ? null : t("chat.disconnected", "Disconnected from gateway.");
   const isChat = state.tab === "chat";
   const chatFocus = isChat && (state.settings.chatFocusMode || state.onboarding);
   const showThinking = state.onboarding ? false : state.settings.chatShowThinking;
@@ -125,8 +120,16 @@ export function renderApp(state: AppViewState) {
                 ...state.settings,
                 navCollapsed: !state.settings.navCollapsed,
               })}
-            title="${state.settings.navCollapsed ? "Expand sidebar" : "Collapse sidebar"}"
-            aria-label="${state.settings.navCollapsed ? "Expand sidebar" : "Collapse sidebar"}"
+            title=${
+              state.settings.navCollapsed
+                ? t("topbar.expand", "Expand sidebar")
+                : t("topbar.collapse", "Collapse sidebar")
+            }
+            aria-label=${
+              state.settings.navCollapsed
+                ? t("topbar.expand", "Expand sidebar")
+                : t("topbar.collapse", "Collapse sidebar")
+            }
           >
             <span class="nav-collapse-toggle__icon">${icons.menu}</span>
           </button>
@@ -136,22 +139,43 @@ export function renderApp(state: AppViewState) {
             </div>
             <div class="brand-text">
               <div class="brand-title">OPENCLAW</div>
-              <div class="brand-sub">Gateway Dashboard</div>
+              <div class="brand-sub">${t("topbar.gatewayDashboard", "Gateway Dashboard")}</div>
             </div>
           </div>
         </div>
         <div class="topbar-status">
           <div class="pill">
             <span class="statusDot ${state.connected ? "ok" : ""}"></span>
-            <span>Health</span>
-            <span class="mono">${state.connected ? "OK" : "Offline"}</span>
+            <span>${t("topbar.health", "Health")}</span>
+            <span class="mono">
+              ${state.connected
+                ? t("topbar.health.ok", "OK")
+                : t("topbar.health.offline", "Offline")}
+            </span>
           </div>
+          <label class="pill">
+            <span>${t("topbar.language", "Language")}</span>
+            <select
+              class="select select--compact"
+              .value=${state.settings.locale}
+              @change=${(event: Event) => {
+                const next = (event.target as HTMLSelectElement).value as UiSettings["locale"];
+                state.applySettings({
+                  ...state.settings,
+                  locale: next,
+                });
+              }}
+            >
+              <option value="en">${t("topbar.language.en", "English")}</option>
+              <option value="zh-CN">${t("topbar.language.zh", "中文")}</option>
+            </select>
+          </label>
           ${renderThemeToggle(state)}
         </div>
       </header>
       <aside class="nav ${state.settings.navCollapsed ? "nav--collapsed" : ""}">
-        ${TAB_GROUPS.map((group) => {
-          const isGroupCollapsed = state.settings.navGroupsCollapsed[group.label] ?? false;
+        ${tabGroups(state.settings.locale).map((group) => {
+          const isGroupCollapsed = state.settings.navGroupsCollapsed[group.key] ?? false;
           const hasActiveTab = group.tabs.some((tab) => tab === state.tab);
           return html`
             <div class="nav-group ${isGroupCollapsed && !hasActiveTab ? "nav-group--collapsed" : ""}">
@@ -159,7 +183,7 @@ export function renderApp(state: AppViewState) {
                 class="nav-label"
                 @click=${() => {
                   const next = { ...state.settings.navGroupsCollapsed };
-                  next[group.label] = !isGroupCollapsed;
+                  next[group.key] = !isGroupCollapsed;
                   state.applySettings({
                     ...state.settings,
                     navGroupsCollapsed: next,
@@ -171,25 +195,25 @@ export function renderApp(state: AppViewState) {
                 <span class="nav-label__chevron">${isGroupCollapsed ? "+" : "−"}</span>
               </button>
               <div class="nav-group__items">
-                ${group.tabs.map((tab) => renderTab(state, tab))}
+                ${group.tabs.map((tab) => renderTab(state, tab, state.settings.locale))}
               </div>
             </div>
           `;
         })}
         <div class="nav-group nav-group--links">
-          <div class="nav-label nav-label--static">
-            <span class="nav-label__text">Resources</span>
-          </div>
+            <div class="nav-label nav-label--static">
+            <span class="nav-label__text">${t("nav.resources", "Resources")}</span>
+            </div>
           <div class="nav-group__items">
             <a
               class="nav-item nav-item--external"
               href="https://docs.openclaw.ai"
               target="_blank"
               rel="noreferrer"
-              title="Docs (opens in new tab)"
+              title=${t("nav.docsTitle", "Docs (opens in new tab)")}
             >
               <span class="nav-item__icon" aria-hidden="true">${icons.book}</span>
-              <span class="nav-item__text">Docs</span>
+              <span class="nav-item__text">${t("nav.docs", "Docs")}</span>
             </a>
           </div>
         </div>
@@ -197,12 +221,12 @@ export function renderApp(state: AppViewState) {
       <main class="content ${isChat ? "content--chat" : ""}">
         <section class="content-header">
           <div>
-            <div class="page-title">${titleForTab(state.tab)}</div>
-            <div class="page-sub">${subtitleForTab(state.tab)}</div>
+            <div class="page-title">${titleForTab(state.tab, state.settings.locale)}</div>
+            <div class="page-sub">${subtitleForTab(state.tab, state.settings.locale)}</div>
           </div>
           <div class="page-meta">
             ${state.lastError ? html`<div class="pill danger">${state.lastError}</div>` : nothing}
-            ${isChat ? renderChatControls(state) : nothing}
+            ${isChat ? renderChatControls(state, state.settings.locale) : nothing}
           </div>
         </section>
 

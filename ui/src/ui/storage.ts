@@ -8,12 +8,23 @@ export type UiSettings = {
   sessionKey: string;
   lastActiveSessionKey: string;
   theme: ThemeMode;
+  locale: "en" | "zh-CN";
   chatFocusMode: boolean;
   chatShowThinking: boolean;
   splitRatio: number; // Sidebar split ratio (0.4 to 0.7, default 0.6)
   navCollapsed: boolean; // Collapsible sidebar state
   navGroupsCollapsed: Record<string, boolean>; // Which nav groups are collapsed
 };
+
+function resolveDefaultLocale(): UiSettings["locale"] {
+  const raw =
+    typeof navigator !== "undefined" ? navigator.language || navigator.languages?.[0] || "" : "";
+  const normalized = raw.trim().toLowerCase();
+  if (normalized.startsWith("zh")) {
+    return "zh-CN";
+  }
+  return "en";
+}
 
 export function loadSettings(): UiSettings {
   const defaultUrl = (() => {
@@ -27,6 +38,7 @@ export function loadSettings(): UiSettings {
     sessionKey: "main",
     lastActiveSessionKey: "main",
     theme: "system",
+    locale: resolveDefaultLocale(),
     chatFocusMode: false,
     chatShowThinking: true,
     splitRatio: 0.6,
@@ -57,6 +69,7 @@ export function loadSettings(): UiSettings {
         parsed.theme === "light" || parsed.theme === "dark" || parsed.theme === "system"
           ? parsed.theme
           : defaults.theme,
+      locale: parsed.locale === "zh-CN" || parsed.locale === "en" ? parsed.locale : defaults.locale,
       chatFocusMode:
         typeof parsed.chatFocusMode === "boolean" ? parsed.chatFocusMode : defaults.chatFocusMode,
       chatShowThinking:

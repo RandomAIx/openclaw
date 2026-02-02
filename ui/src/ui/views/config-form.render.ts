@@ -94,19 +94,6 @@ const sectionIcons = {
       ></path>
     </svg>
   `,
-  wizard: html`
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M15 4V2"></path>
-      <path d="M15 16v-2"></path>
-      <path d="M8 9h2"></path>
-      <path d="M20 9h2"></path>
-      <path d="M17.8 11.8 19 13"></path>
-      <path d="M15 9h0"></path>
-      <path d="M17.8 6.2 19 5"></path>
-      <path d="m3 21 9-9"></path>
-      <path d="M12.2 6.2 11 5"></path>
-    </svg>
-  `,
   // Additional sections
   meta: html`
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -255,7 +242,6 @@ export const SECTION_META: Record<string, { label: string; description: string }
   skills: { label: "Skills", description: "Skill packs and capabilities" },
   tools: { label: "Tools", description: "Tool configurations (browser, search, etc.)" },
   gateway: { label: "Gateway", description: "Gateway server settings (port, auth, binding)" },
-  wizard: { label: "Setup Wizard", description: "Setup wizard state and history" },
   // Additional sections
   meta: { label: "Metadata", description: "Gateway metadata and version information" },
   logging: { label: "Logging", description: "Log levels and output configuration" },
@@ -347,7 +333,9 @@ export function renderConfigForm(props: ConfigFormProps) {
   const activeSection = props.activeSection;
   const activeSubsection = props.activeSubsection ?? null;
 
-  const entries = Object.entries(properties).sort((a, b) => {
+  const entries = Object.entries(properties)
+    .filter(([key]) => key !== "wizard")
+    .sort((a, b) => {
     const orderA = hintForPath([a[0]], props.uiHints)?.order ?? 50;
     const orderB = hintForPath([b[0]], props.uiHints)?.order ?? 50;
     if (orderA !== orderB) return orderA - orderB;
